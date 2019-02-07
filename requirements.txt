@@ -1,8 +1,10 @@
+autopep8==1.4.3
 certifi==2018.11.29
 chardet==3.0.4
 idna==2.8
 oauthlib==3.0.1
 pep8==1.7.1
+pycodestyle==2.5.0
 PySocks==1.6.8
 requests==2.21.0
 requests-oauthlib==1.2.0
