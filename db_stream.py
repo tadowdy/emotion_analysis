@@ -20,9 +20,10 @@ def connect(username, created_at, tweet, place, location):
             handle data
             """
             cursor = connect.cursor()
-            query = "INSERT INTO Golf (username, created_at, tweet, place, location) VALUES (%s, %s, %s, %s, %s)"
+            query = "INSERT INTO tweets (username, createdat, content,location, place) VALUES (%s, %s, %s, %s, %s)"
             cursor.execute(
                 query, (username, created_at, tweet, location, place))
+            connect.commit()
     except Error as e:
         print(e)
     cursor.close()
@@ -33,7 +34,7 @@ class TheStreamListener(tweepy.StreamListener):
     def on_status(self, status):
         print(status.text)
 
-    def data(self, data):
+    def on_data(self, data):
         try:
             raw_data = json.loads(data)
             if 'text' in raw_data:  # if there's text in the data

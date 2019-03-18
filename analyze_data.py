@@ -1,6 +1,6 @@
 import tweepy
 import auth as a
-import db_stream as db_s
+from db_stream import TheStreamListener
 
 consumer_key = a.CONSUMER_KEY
 consumer_secret = a.CONSUMER_SECRET
@@ -18,11 +18,11 @@ api = tweepy.API(auth)
 #     print(tweet.text)
 
 # creating a stream
-s_listener = db_s.TheStreamListener()
+s_listener = TheStreamListener()
 my_stream = tweepy.Stream(auth=api.auth, listener=s_listener)
 
 # track a stream by a word
-my_stream.filter(track=['stl'])
+my_stream.filter(track=['stl', 'work'])
 
 # for tracking by a single user
 # myStream.filter(follow=["2211149702"])
