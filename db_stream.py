@@ -34,6 +34,12 @@ class TheStreamListener(tweepy.StreamListener):
     def on_status(self, status):
         print(status.text)
 
+    def on_error(self):
+        if status_code != 200:
+            print("error found")
+            # returning false disconnects the stream
+            return False
+
     def on_data(self, data):
         try:
             raw_data = json.loads(data)
