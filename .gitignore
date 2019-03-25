@@ -1,0 +1,8 @@
+# virtual environment
+venv
+
+# authentication vars
+auth.py
+
+# compiled file
+__pycache__
