@@ -10,6 +10,8 @@ from textblob import sentiments
 import pandas as pd
 import auth
 from sqlalchemy import create_engine
+import mysql.connector
+from mysql.connector import Error
 
 # connect to db
 connect = ""
@@ -17,6 +19,11 @@ try:
     print("connecting...")
     connect = create_engine(
         "mysql+pymysql://root:password@localhost/twitter_db")
+    connect_sql = mysql.connector.connect(
+        host=auth.HOST, database=auth.DATABASE,
+        user=auth.USER, password=auth.PASSWORD)
+    cursor = connect_sql.cursor()
+
     print("connected")
 
 except:
@@ -30,21 +37,31 @@ print("dataframe complete")
 
 # analyze tables and store data
 print("collecting scores...")
-for tweet in df['content']:
-    analysis = textblob.TextBlob(tweet)
+f = open("sql.txt", "w+")
+for index, row in df.iterrows():
+    query = ""
+    analysis = textblob.TextBlob(row['content'])
     analysis = analysis.sentiment
-    df['sentiment_score'] = analysis[0]
-    df['subjective_score'] = analysis[1]
+    query = 'update twitter_db.tweets set sentiment_score = "' + \
+        str(analysis[0])+'" where id = '+str(index)+';\n'
+    f.write(query)
+    query = 'update twitter_db.tweets set subjective_score = "' + \
+        str(analysis[1])+'" where id = '+str(index)+';\n'
+    f.write(query)
 
     # set approximate value
+    value = ""
     if analysis[0] > 0:
-        df['sentiment'] = "positive"
+        value = "positive"
     elif analysis[0] < 0:
-        df['sentiment'] = "negative"
+        value = "negative"
     else:
-        df['sentiment'] = "neutral"
-print("scores collected")
-print(df)
-df.to_sql("tweets", connect, if_exists='append')
+        value = "neutral"
+    query = 'update twitter_db.tweets set sentiment = "' + \
+        value + '" where id = '+str(index)+';\n'
+    f.write(query)
 
-connect.close()
+print("scores collected")
+
+connect_sql.close()
+print("done.")
